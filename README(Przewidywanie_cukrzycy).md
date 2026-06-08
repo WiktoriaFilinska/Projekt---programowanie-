@@ -1,4 +1,4 @@
-# Diabetes Prediction — Binary Classification
+# Przewidywanie cukrzycy — Klasyfikacja binarna
 
 Projekt zaliczeniowy z przedmiotu Programowanie 2.
 Celem projektu jest implementacja i porównanie modeli uczenia maszynowego
