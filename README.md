@@ -48,10 +48,11 @@ Notebook zawiera:
 - czyszczenie danych i obsługę brakujących wartości
 - budowę pipeline'u ML z użyciem scikit-learn
 - porównanie trzech modeli klasyfikacji
-- strojenie hiperparametrów metodą GridSearchCV
+- strojenie hiperparametrów Random Forest metodą GridSearchCV
+- wybór modelu końcowego na podstawie wyników cross-validation
 - ocenę finalnego modelu na zbiorze testowym
-- wizualizacje: macierz konfuzji, krzywa ROC, ważność cech
-- przykładowe predykcje dla nowych danych
+- wizualizacje: macierz konfuzji, krzywa ROC, współczynniki modelu
+- przykładowe predykcje dla nowych danych z dwoma progami decyzyjnymi
 
 ## Metodologia
 
@@ -64,8 +65,10 @@ Podział danych: 80% trening / 20% test z parametrem stratify, który
 gwarantuje zachowanie proporcji klas w obu zbiorach.
 
 Porównanie modeli przeprowadzono przy użyciu StratifiedKFold (k=5)
-z metryką ROC-AUC. Najlepszy model poddano strojeniu hiperparametrów
-przez GridSearchCV, po czym oceniono go jednorazowo na zbiorze testowym.
+z metryką ROC-AUC. Random Forest poddano dodatkowo strojeniu hiperparametrów
+przez GridSearchCV z rozszerzoną siatką parametrów i StandardScaler w pipeline.
+Model końcowy wybrano na podstawie najwyższego ROC-AUC w cross-validation
+i oceniono jednorazowo na zbiorze testowym.
 
 ## Wyniki
 
@@ -73,24 +76,24 @@ Porównanie modeli w walidacji krzyżowej:
 
 | Model | ROC-AUC (CV) |
 |---|---|
-| Logistic Regression | 0.82 |
-| Random Forest | 0.84 |
-| SVM | 0.82 |
+| Logistic Regression | 0.8434 |
+| Random Forest (po strojeniu) | 0.8406 |
+| SVM | 0.8333 |
 
-Najlepsze wyniki uzyskał Random Forest. Po strojeniu przez GridSearchCV
-(max_depth=5, min_samples_split=5, n_estimators=50) model osiągnął
-na zbiorze testowym:
+Najlepsze wyniki osiągnęła Logistic Regression i została wybrana jako model
+końcowy. Wyniki na zbiorze testowym:
 
 | Metryka | Wartość |
 |---|---|
-| Accuracy | 0.75 |
-| ROC-AUC | 0.82 |
-| Precision (cukrzyca) | 0.68 |
-| Recall (cukrzyca) | 0.52 |
-| F1-score (cukrzyca) | 0.59 |
+| Accuracy | 0.71 |
+| ROC-AUC | 0.81 |
+| Precision (cukrzyca) | 0.60 |
+| Recall (cukrzyca) | 0.50 |
+| F1-score (cukrzyca) | 0.55 |
 
-Najważniejsza cecha predykcyjna to Glucose (ważność 0.35), następnie
-BMI (0.19) i Age (0.12), co jest zgodne z kliniczną wiedzą medyczną.
+Najważniejsze cechy według współczynników modelu: Glucose (1.18),
+BMI (0.69) i liczba ciąż (0.38) — wszystkie zwiększają ryzyko cukrzycy,
+co jest zgodne z wiedzą medyczną.
 
 ## Technologie
 
